@@ -21,15 +21,15 @@ namespace iXML
         private int IRowCount;
         private DataTable ReturnDataTable;
         private bool XMLIsLoaded = false;
-        private string BaseURL = "";
+        private string BaseURL = string.Empty;
         private string DB2Parm = "db2=@@db2value&uid=@@uidvalue&pwd=@@pwdvalue&ipc=@@ipcvalue&ctl=@@ctlvalue&xmlin=@@xmlinvalue&xmlout=@@xmloutvalue";
         private DataTable ProgramResponse;
-        private string User = "";
-        private string Password = "";
-        private string IPCInfo = "";
+        private string User = string.Empty;
+        private string Password = string.Empty;
+        private string IPCInfo = string.Empty;
         private string DB2Info = "*LOCAL";
-        private string LastHTTPResponse = "";
-        private string LastXMLResponse = "";
+        private string LastHTTPResponse = string.Empty;
+        private string LastXMLResponse = string.Empty;
         private int HttpTimeout = 60000;
 
         /// <summary>
