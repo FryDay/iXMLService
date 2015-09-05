@@ -38,6 +38,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
+            this.btnKillService = new System.Windows.Forms.Button();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -62,7 +63,7 @@
             // btnClTest
             // 
             this.btnClTest.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnClTest.Location = new System.Drawing.Point(299, 43);
+            this.btnClTest.Location = new System.Drawing.Point(131, 43);
             this.btnClTest.Name = "btnClTest";
             this.btnClTest.Size = new System.Drawing.Size(75, 23);
             this.btnClTest.TabIndex = 2;
@@ -141,16 +142,29 @@
             // 
             // tableLayoutPanel2
             // 
-            this.tableLayoutPanel2.ColumnCount = 1;
+            this.tableLayoutPanel2.ColumnCount = 2;
+            this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 50F));
             this.tableLayoutPanel2.Controls.Add(this.btnClTest, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.btnKillService, 1, 0);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(0, 119);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
             this.tableLayoutPanel2.RowCount = 1;
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(674, 109);
             this.tableLayoutPanel2.TabIndex = 9;
+            // 
+            // btnKillService
+            // 
+            this.btnKillService.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnKillService.Location = new System.Drawing.Point(468, 43);
+            this.btnKillService.Name = "btnKillService";
+            this.btnKillService.Size = new System.Drawing.Size(75, 23);
+            this.btnKillService.TabIndex = 3;
+            this.btnKillService.Text = "Kill Service";
+            this.btnKillService.UseVisualStyleBackColor = true;
+            this.btnKillService.Click += new System.EventHandler(this.btnKillService_Click);
             // 
             // Form1
             // 
@@ -182,6 +196,7 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.Button btnKillService;
     }
 }
 

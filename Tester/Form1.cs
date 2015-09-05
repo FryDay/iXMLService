@@ -51,5 +51,37 @@ namespace Tester
             }
 
         }
+
+        private void btnKillService_Click(object sender, EventArgs e)
+        {
+            bool rtn = false;
+            try
+            {
+                btnKillService.Enabled = false;
+
+                iXMLSrv.SetBaseURL((txtUrl.Text.Trim()));
+                iXMLSrv.SetUserInfo(txtUser.Text.Trim(), txtPassword.Text.Trim());
+                iXMLSrv.SetIpcInfo("/tmp/xmlservicei");
+
+                rtn = iXMLSrv.KillService();
+
+                if (rtn)
+                {
+                    txtOutput.Text = "Service shutdown was successful. XML Response: " + Environment.NewLine + iXMLSrv.GetLastXmlResponse();
+                }
+                else
+                {
+                    txtOutput.Text = "Service shutdown failed. XML Response: " + Environment.NewLine + iXMLSrv.GetLastXmlResponse();
+                }
+            }
+            catch (Exception ex)
+            {
+                txtOutput.Text = "Error: " + ex.Message;
+            }
+            finally
+            {
+                btnKillService.Enabled = true;
+            }
+        }
     }
 }
