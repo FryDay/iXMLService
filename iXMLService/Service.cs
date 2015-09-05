@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
 
 namespace iXML
 {
@@ -88,7 +89,7 @@ namespace iXML
         /// </summary>
         /// <param name="iTimeout">HTTP timeout in milliseconds</param>
         /// <returns>True == Success, False == Fail</returns>
-        public bool SetHttpTimeout(int timeout)
+        public bool SetHttpTimeout(int timeout = 60000)
         {
             try
             {
@@ -269,6 +270,169 @@ namespace iXML
                 this.LastError = ex.Message;
                 return null;
             }
+        }
+
+        /// <summary>
+        /// This kills the currently active IPC service instance on IBM i system.
+        /// These jobs are all marked as XTOOLKIT and can be seen by running WRKACTJOB JOB(XTOOLKIT).
+        /// Note: If you will be doing a lot of work, you can leave the job instantiated. Otherwise kill the XTOOLKIT job
+        /// if you're done using it. 
+        /// </summary>
+        /// <returns>True - kill succeeded. Return XML will always be blank so we will always return true most likely.</returns>
+        public bool KillService()
+        {
+            string db2Parm = this.DB2Parm;
+            string rtnXml = string.Empty;
+
+            try
+            {
+                string xmlIn = "<?xml version='1.0'?>" +
+                               "<?xml-stylesheet type='text/xsl' href='/DemoXslt.xsl'?>" +
+                               "<script></script>";
+                string xmlOut = "500000";
+
+                this.LastError = string.Empty;
+
+                db2Parm = SetDb2Parm(xmlIn, xmlOut);
+                db2Parm = db2Parm.Replace("@@ctlvalue", "*immed");
+                db2Parm = db2Parm + "&submit=*immed end (kill job)"; //TODO: Probably could be done better.
+
+                rtnXml = HttpRequest(this.BaseURL, "POST", db2Parm);
+
+                if (rtnXml == string.Empty)
+                {
+                    LastXMLResponse = rtnXml;
+                    return true;                   
+                }
+                else
+                {
+                    throw new Exception(rtnXml);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.LastXMLResponse = rtnXml;
+                this.LastError = ex.Message;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// This function runs the specified IBM i CL command. The CL command can be a regular call or a SBMJOB command.
+        /// </summary>
+        /// <param name="command"></param>
+        /// <returns>True == Success, False == Fail</returns>
+        public bool ExecuteCommand(string command)
+        {
+            string db2Parm = this.DB2Parm;
+            string rtnXml = string.Empty;
+
+            try
+            {
+                string xmlIn = "<?xml version='1.0'?>" +
+                               "<?xml-stylesheet type='text/xsl' href='/DemoXslt.xsl'?>" +
+                               "<script><cmd>" + command + "</cmd></script>";
+                string xmlOut = "32768";
+
+                this.LastHTTPResponse = string.Empty;
+                this.LastXMLResponse = string.Empty;
+                this.LastError = string.Empty;
+
+                db2Parm = SetDb2Parm(xmlIn, xmlOut);
+                db2Parm = db2Parm.Replace("@@ctlvalue", "*sbmjob");
+
+                rtnXml = HttpRequest(this.BaseURL, "POST", db2Parm);
+
+                if (rtnXml.Contains("+++ success")) // TODO: Hardcoded string for measuring success? o_o
+                {
+                    this.LastXMLResponse = rtnXml;
+                    return true;
+                }
+                else
+                {
+                    throw new Exception(rtnXml);
+                }
+            }
+            catch (Exception ex)
+            {
+                this.LastXMLResponse = rtnXml;
+                this.LastError = ex.Message;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// Sets non-changing db2 parms.
+        /// </summary>
+        /// <param name="xmlIn"></param>
+        /// <param name="xmlOut"></param>
+        /// <returns>DB2 parm</returns>
+        private string SetDb2Parm(string xmlIn, string xmlOut)
+        {
+            string db2Parm = this.DB2Parm;
+
+            db2Parm = db2Parm.Replace("@@db2value", this.DB2Info);
+            db2Parm = db2Parm.Replace("@@uidvalue", this.User);
+            db2Parm = db2Parm.Replace("@@pwdvalue", this.Password);
+            db2Parm = db2Parm.Replace("@@ipcvalue", this.IPCInfo);
+            db2Parm = db2Parm.Replace("@@xmlinvalue", xmlIn);
+            db2Parm = db2Parm.Replace("@@xmloutvalue", xmlOut);
+
+            return db2Parm;
+        }
+    
+        /// <summary>
+        /// Make an HTTP request with selected URL and get response
+        /// </summary>
+        /// <param name="url"></param>
+        /// <param name="method"></param>
+        /// <param name="data"></param>
+        /// <param name="timeout"></param>
+        /// <returns>XML response or error string starting with "ERROR"</returns>
+        private string HttpRequest(string url, string method, string data)
+        {
+            string responseData = string.Empty;
+
+            try
+            {
+                this.LastHTTPResponse = string.Empty;
+
+                HttpWebRequest request = (HttpWebRequest)WebRequest.Create(url);
+                request.Accept = "*/*";
+                request.AllowAutoRedirect = true;
+                request.Credentials = new NetworkCredential(this.User, this.Password);
+                request.UserAgent = "iXMLService/1.0";
+                request.Timeout = this.HttpTimeout;
+                request.Method = method;
+
+                if (request.Method == "POST")
+                {                    
+                    Byte[] postBytes = new ASCIIEncoding().GetBytes(data);
+                    request.ContentType = "application/x-www-form-urlencoded";
+                    request.ContentLength = postBytes.Length;
+
+                    Stream post = request.GetRequestStream();
+                    post.Write(postBytes, 0, postBytes.Length);
+                    post.Close();
+                }
+
+                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
+                this.LastHTTPResponse = response.StatusCode + " " + response.StatusDescription;
+
+                if (response.StatusCode == HttpStatusCode.OK)
+                {
+                    StreamReader responseStream = new StreamReader(response.GetResponseStream());
+                    responseData = responseStream.ReadToEnd();
+                }
+
+                response.Close();
+            }
+            catch (WebException ex)
+            {
+                responseData = new StreamReader(ex.Response.GetResponseStream()).ReadToEnd();                
+            }
+
+            return responseData;
         }
     }
 }
