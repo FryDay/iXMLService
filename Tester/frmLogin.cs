@@ -15,6 +15,8 @@ namespace Tester
         public frmLogin()
         {
             InitializeComponent();
+            txtUrl.Text = Settings.Default.URL;
+            txtUser.Text = Settings.Default.User;
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -22,6 +24,14 @@ namespace Tester
             LoginInfo.URL = txtUrl.Text;
             LoginInfo.User = txtUser.Text;
             LoginInfo.SetPassword(txtPassword.Text);
+            if (chkRemember.Checked)
+            {
+                Settings.Default.URL = txtUrl.Text;
+                Settings.Default.User = txtUser.Text;
+                Settings.Default.Password = LoginInfo.GetPassword();
+
+                Settings.Default.Save();
+            }
         }
     }
 }

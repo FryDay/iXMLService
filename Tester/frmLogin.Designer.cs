@@ -38,6 +38,7 @@
             this.tableLayoutPanel2 = new System.Windows.Forms.TableLayoutPanel();
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
+            this.chkRemember = new System.Windows.Forms.CheckBox();
             this.tableLayoutPanel1.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
             this.SuspendLayout();
@@ -53,20 +54,22 @@
             this.tableLayoutPanel1.Controls.Add(this.label2, 0, 1);
             this.tableLayoutPanel1.Controls.Add(this.txtPassword, 1, 2);
             this.tableLayoutPanel1.Controls.Add(this.label1, 0, 0);
+            this.tableLayoutPanel1.Controls.Add(this.chkRemember, 1, 3);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Top;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
-            this.tableLayoutPanel1.RowCount = 3;
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 33.33333F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(354, 119);
+            this.tableLayoutPanel1.RowCount = 4;
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 25F));
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(373, 119);
             this.tableLayoutPanel1.TabIndex = 9;
             // 
             // txtUrl
             // 
             this.txtUrl.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.txtUrl.Location = new System.Drawing.Point(180, 9);
+            this.txtUrl.Location = new System.Drawing.Point(189, 4);
             this.txtUrl.Name = "txtUrl";
             this.txtUrl.Size = new System.Drawing.Size(171, 20);
             this.txtUrl.TabIndex = 0;
@@ -75,7 +78,7 @@
             // 
             this.label3.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(121, 92);
+            this.label3.Location = new System.Drawing.Point(130, 66);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(53, 13);
             this.label3.TabIndex = 7;
@@ -84,7 +87,7 @@
             // txtUser
             // 
             this.txtUser.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.txtUser.Location = new System.Drawing.Point(180, 48);
+            this.txtUser.Location = new System.Drawing.Point(189, 33);
             this.txtUser.Name = "txtUser";
             this.txtUser.Size = new System.Drawing.Size(171, 20);
             this.txtUser.TabIndex = 1;
@@ -93,7 +96,7 @@
             // 
             this.label2.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(145, 52);
+            this.label2.Location = new System.Drawing.Point(154, 37);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(29, 13);
             this.label2.TabIndex = 6;
@@ -102,7 +105,7 @@
             // txtPassword
             // 
             this.txtPassword.Anchor = System.Windows.Forms.AnchorStyles.Left;
-            this.txtPassword.Location = new System.Drawing.Point(180, 88);
+            this.txtPassword.Location = new System.Drawing.Point(189, 62);
             this.txtPassword.Name = "txtPassword";
             this.txtPassword.PasswordChar = '*';
             this.txtPassword.Size = new System.Drawing.Size(171, 20);
@@ -112,7 +115,7 @@
             // 
             this.label1.Anchor = System.Windows.Forms.AnchorStyles.Right;
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(145, 13);
+            this.label1.Location = new System.Drawing.Point(154, 8);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(29, 13);
             this.label1.TabIndex = 5;
@@ -131,14 +134,14 @@
             this.tableLayoutPanel2.RowCount = 1;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(354, 33);
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(373, 59);
             this.tableLayoutPanel2.TabIndex = 10;
             // 
             // btnOk
             // 
             this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.btnOk.DialogResult = System.Windows.Forms.DialogResult.OK;
-            this.btnOk.Location = new System.Drawing.Point(51, 5);
+            this.btnOk.Location = new System.Drawing.Point(55, 18);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 3;
@@ -150,23 +153,36 @@
             // 
             this.btnCancel.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.btnCancel.DialogResult = System.Windows.Forms.DialogResult.Cancel;
-            this.btnCancel.Location = new System.Drawing.Point(228, 5);
+            this.btnCancel.Location = new System.Drawing.Point(242, 18);
             this.btnCancel.Name = "btnCancel";
             this.btnCancel.Size = new System.Drawing.Size(75, 23);
             this.btnCancel.TabIndex = 1;
             this.btnCancel.Text = "Cancel";
             this.btnCancel.UseVisualStyleBackColor = true;
             // 
+            // chkRemember
+            // 
+            this.chkRemember.Anchor = System.Windows.Forms.AnchorStyles.Left;
+            this.chkRemember.AutoSize = true;
+            this.chkRemember.CheckAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.chkRemember.Checked = true;
+            this.chkRemember.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.chkRemember.Location = new System.Drawing.Point(189, 94);
+            this.chkRemember.Name = "chkRemember";
+            this.chkRemember.Size = new System.Drawing.Size(83, 17);
+            this.chkRemember.TabIndex = 9;
+            this.chkRemember.Text = "Remember?";
+            this.chkRemember.UseVisualStyleBackColor = true;
+            // 
             // frmLogin
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(354, 152);
+            this.ClientSize = new System.Drawing.Size(373, 178);
             this.Controls.Add(this.tableLayoutPanel2);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "frmLogin";
             this.ShowIcon = false;
-            this.ShowInTaskbar = false;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Login";
             this.tableLayoutPanel1.ResumeLayout(false);
@@ -188,5 +204,6 @@
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
         private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Button btnCancel;
+        private System.Windows.Forms.CheckBox chkRemember;
     }
 }

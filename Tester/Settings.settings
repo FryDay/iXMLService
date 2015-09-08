@@ -2,13 +2,13 @@
 <SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="Tester" GeneratedClassName="Settings">
   <Profiles />
   <Settings>
-    <Setting Name="URL" Type="System.String" Scope="Application">
+    <Setting Name="URL" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="User" Type="System.String" Scope="Application">
+    <Setting Name="User" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
-    <Setting Name="Password" Type="System.String" Scope="Application">
+    <Setting Name="Password" Type="System.String" Scope="User">
       <Value Profile="(Default)" />
     </Setting>
   </Settings>

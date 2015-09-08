@@ -25,7 +25,7 @@ namespace Tester
                 case DialogResult.OK:
                     break;
                 case DialogResult.Cancel:
-                    Application.Exit();
+                    Environment.Exit(0);
                     break;
             }
         }
