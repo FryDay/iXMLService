@@ -17,6 +17,7 @@ namespace Tester
             InitializeComponent();
             txtUrl.Text = Settings.Default.URL;
             txtUser.Text = Settings.Default.User;
+            //txtPassword.Text = LoginInfo.Decrypt(Settings.Default.Password);
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -24,11 +25,12 @@ namespace Tester
             LoginInfo.URL = txtUrl.Text;
             LoginInfo.User = txtUser.Text;
             LoginInfo.SetPassword(txtPassword.Text);
+
             if (chkRemember.Checked)
             {
                 Settings.Default.URL = txtUrl.Text;
                 Settings.Default.User = txtUser.Text;
-                Settings.Default.Password = LoginInfo.GetPassword();
+                Settings.Default.Password = LoginInfo.GetEncPassword();
 
                 Settings.Default.Save();
             }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Security;
 using System.Security.Cryptography;
 
 namespace Tester
@@ -23,13 +24,39 @@ namespace Tester
         public static string GetPassword()
         {
             byte[] decPass = new byte[Password.Length];
-            Password.CopyTo(decPass, 0);
+            try
+            {
+                Password.CopyTo(decPass, 0);
 
-            DecryptInMemoryData(decPass, MemoryProtectionScope.SameProcess);
-            return Encoding.ASCII.GetString(decPass).Trim();
+                DecryptInMemoryData(decPass, MemoryProtectionScope.SameProcess);
+                return Encoding.ASCII.GetString(decPass).Trim();
+            }
+            finally
+            {
+                Array.Clear(decPass, 0, decPass.Length);
+            }
         }
 
-        public static void EncryptInMemoryData(byte[] buffer, MemoryProtectionScope scope)
+        public static string Decrypt(string encString)
+        {
+            byte[] decPass = Convert.FromBase64String(encString);
+            try
+            {
+                DecryptInMemoryData(decPass, MemoryProtectionScope.SameProcess);
+                return Encoding.ASCII.GetString(decPass).Trim();
+            }
+            finally
+            {
+                Array.Clear(decPass, 0, decPass.Length);
+            }
+        }
+
+        public static string GetEncPassword()
+        {
+            return Convert.ToBase64String(Password);
+        }
+
+        private static void EncryptInMemoryData(byte[] buffer, MemoryProtectionScope scope)
         {
             if (buffer.Length <= 0)
                 throw new ArgumentException("Buffer");
@@ -40,7 +67,7 @@ namespace Tester
             ProtectedMemory.Protect(buffer, scope);
         }
 
-        public static void DecryptInMemoryData(byte[] buffer, MemoryProtectionScope scope)
+        private static void DecryptInMemoryData(byte[] buffer, MemoryProtectionScope scope)
         {
             if (buffer.Length <= 0)
                 throw new ArgumentException("Buffer");
