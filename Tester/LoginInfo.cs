@@ -22,31 +22,33 @@ namespace Tester
 
         public static string GetPassword()
         {
-            DecryptInMemoryData(Password, MemoryProtectionScope.SameProcess);
-            Console.WriteLine(Encoding.ASCII.GetString(Password));
-            return Encoding.ASCII.GetString(Password).Trim();
+            byte[] decPass = new byte[Password.Length];
+            Password.CopyTo(decPass, 0);
+
+            DecryptInMemoryData(decPass, MemoryProtectionScope.SameProcess);
+            return Encoding.ASCII.GetString(decPass).Trim();
         }
 
-        public static void EncryptInMemoryData(byte[] Buffer, MemoryProtectionScope Scope)
+        public static void EncryptInMemoryData(byte[] buffer, MemoryProtectionScope scope)
         {
-            if (Buffer.Length <= 0)
+            if (buffer.Length <= 0)
                 throw new ArgumentException("Buffer");
-            if (Buffer == null)
+            if (buffer == null)
                 throw new ArgumentNullException("Buffer");
 
             // Encrypt the data in memory. The result is stored in the same same array as the original data.
-            ProtectedMemory.Protect(Buffer, Scope);
+            ProtectedMemory.Protect(buffer, scope);
         }
 
-        public static void DecryptInMemoryData(byte[] Buffer, MemoryProtectionScope Scope)
+        public static void DecryptInMemoryData(byte[] buffer, MemoryProtectionScope scope)
         {
-            if (Buffer.Length <= 0)
+            if (buffer.Length <= 0)
                 throw new ArgumentException("Buffer");
-            if (Buffer == null)
+            if (buffer == null)
                 throw new ArgumentNullException("Buffer");
 
             // Decrypt the data in memory. The result is stored in the same same array as the original data.
-            ProtectedMemory.Unprotect(Buffer, Scope);
+            ProtectedMemory.Unprotect(buffer, scope);
         }
     }
 }
