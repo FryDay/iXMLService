@@ -17,6 +17,17 @@ namespace Tester
         public Form1()
         {
             InitializeComponent();
+            frmLogin loginDiag = new frmLogin();
+            DialogResult result = loginDiag.ShowDialog();
+
+            switch (result)
+            {
+                case DialogResult.OK:
+                    break;
+                case DialogResult.Cancel:
+                    Application.Exit();
+                    break;
+            }
         }
 
         private void btnClTest_Click(object sender, EventArgs e)
@@ -26,11 +37,11 @@ namespace Tester
             {
                 btnClTest.Enabled = false;
 
-                iXMLSrv.SetBaseURL((txtUrl.Text.Trim()));
-                iXMLSrv.SetUserInfo(txtUser.Text.Trim(), txtPassword.Text.Trim());
+                iXMLSrv.SetBaseURL(LoginInfo.URL);
+                iXMLSrv.SetUserInfo(LoginInfo.User, LoginInfo.GetPassword());
                 iXMLSrv.SetIpcInfo("/tmp/xmlservicei");
 
-                rtn = iXMLSrv.ExecuteCommand("SNDMSG MSG('TEST XMLSERVICE') TOUSR(" + txtUser.Text.Trim() + ")");
+                rtn = iXMLSrv.ExecuteCommand("SNDMSG MSG('TEST XMLSERVICE') TOUSR(" + LoginInfo.User + ")");
 
                 if (rtn)
                 {
@@ -59,8 +70,8 @@ namespace Tester
             {
                 btnKillService.Enabled = false;
 
-                iXMLSrv.SetBaseURL((txtUrl.Text.Trim()));
-                iXMLSrv.SetUserInfo(txtUser.Text.Trim(), txtPassword.Text.Trim());
+                iXMLSrv.SetBaseURL(LoginInfo.URL);
+                iXMLSrv.SetUserInfo(LoginInfo.User, LoginInfo.GetPassword());
                 iXMLSrv.SetIpcInfo("/tmp/xmlservicei");
 
                 rtn = iXMLSrv.KillService();
