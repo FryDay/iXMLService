@@ -360,6 +360,218 @@ namespace iXML
         }
 
         /// <summary>
+        /// This function queries the DB2 database with selected SQL statement and returns results to 
+        /// specified XML file.
+        /// </summary>
+        /// <param name="sql"></param>
+        /// <param name="outputFile"></param>
+        /// <returns>True == Success, False == Fail</returns>
+        public bool ExecuteSqlQueryPrepared(string sql, string outputFile = "")
+        {
+            string db2Parm = this.DB2Parm;
+            string rtnXml = string.Empty;
+            bool rtnLoad = false;
+
+            try
+            {
+                string xmlIn = "<?xml version='1.0'?>" +
+                     "<?xml-stylesheet type='text/xsl' href='/DemoXslt.xsl'?>" +
+                        "<script>" +
+                        "<sql>" +
+                            "<options options='noauto' autocommit='off'/>" +
+                        "</sql>" +
+                        "<sql>" +
+                            "<connect conn='myconn' options='noauto'/>" +
+                        "</sql>" +
+                        "<sql>" +
+                            "<prepare conn='myconn'>" + sql.Trim() + "</prepare>" +
+                        "</sql>" +
+                        "<sql>" +
+                            "<execute/>" +
+                        "</sql>" +
+                        "<sql>" +
+                            "<describe desc='col'/>" +
+                        "</sql>" +
+                        "<sql>" +
+                            "<fetch block='all' desc='on'/>" +
+                        "</sql>" +
+                        "<sql>" +
+                            "<free/>" +
+                        "</sql>" +
+                        "</script>";
+                string xmlOut = "500000";
+
+                this.LastHTTPResponse = string.Empty;
+                this.LastXMLResponse = string.Empty;
+                this.LastError = string.Empty;
+
+                if (sql.ToUpper().Contains("UPDATE ") || sql.ToUpper().Contains("DELETE ") || sql.ToUpper().Contains("INSERT "))
+                {
+                    throw new Exception("Only SQL selection queries are supported");
+                }
+                if (sql.ToUpper().StartsWith("UPDATE") || sql.ToUpper().StartsWith("DELETE") || sql.ToUpper().StartsWith("INSERT"))
+                {
+                    throw new Exception("SQL statement cannot start with INSERT, UPDATE or DELETE");
+                }
+                if (!sql.ToUpper().StartsWith("SELECT"))
+                {
+                    throw new Exception("SQL selection must start with SELECT");
+                }
+
+                db2Parm = SetDb2Parm(xmlIn, xmlOut);
+                db2Parm = db2Parm.Replace("@@ctlvalue", "*sbmjob");
+
+                rtnXml = HttpRequest(this.BaseURL, "POST", db2Parm);
+
+                if (rtnXml.StartsWith("ERROR"))
+                {
+                    throw new Exception(rtnXml);
+                }
+
+                if (outputFile.Trim() != string.Empty)
+                {
+                    WriteStringToFile(rtnXml, outputFile);
+                    rtnLoad = LoadDataSetFromXmlFile(outputFile);
+                }
+                else
+                {
+                    rtnLoad = LoadDataSetFromXmlString(rtnXml);
+                }
+
+                this.LastXMLResponse = rtnXml;
+
+                return rtnLoad;
+            }
+            catch (Exception ex)
+            {
+                this.LastXMLResponse = rtnXml;
+                this.LastError = ex.Message;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// This function loads an XML file that contains a data stream returned from the XMLSERVICE service program
+        /// </summary>
+        /// <param name="xmlFile"></param>
+        /// <returns>True == Success, False == Fail</returns>
+        public bool LoadDataSetFromXmlFile(string xmlFile)
+        {
+            try
+            {
+                this.LastError = string.Empty;
+
+                if (!File.Exists(xmlFile))
+                {
+                    throw new Exception("XML file " + xmlFile + " does not exist. Process cancelled.");
+                }
+
+                this.DS1 = new DataSet();
+                this.DS1.ReadXml(xmlFile);
+
+                this.ColumnDefinitions = this.DS1.Tables["col"];
+                this.IColumnCount = this.DS1.Tables["col"].Rows.Count;
+                this.IRowCount = this.DS1.Tables["data"].Rows.Count / this.IColumnCount;
+
+                this.ReturnDataTable = new DataTable();
+                foreach (DataRow dr in this.DS1.Tables["col"].Rows)
+                {
+                    this.ReturnDataTable.Columns.Add(dr[0].ToString(), typeof(string));
+                }
+
+                int colCount = 0;
+                DataRow dr2 = null;
+                foreach (DataRow dr in this.DS1.Tables["data"].Rows)
+                {
+                    if (colCount == 0)
+                    {
+                        dr2 = this.ReturnDataTable.NewRow();
+                    }
+                    else if (colCount == this.IColumnCount)
+                    {
+                        this.ReturnDataTable.Rows.Add(dr2);
+                        dr2 = this.ReturnDataTable.NewRow();
+                        colCount = 0;
+                    }
+
+                    dr2[(DataColumn)dr[0]] = dr[1];
+                    colCount += 1;
+                }
+
+                this.ReturnDataTable.Rows.Add(dr2);
+                this.LastError = this.IRowCount + " rows were returned from XML file " + xmlFile;
+                this.XMLIsLoaded = true;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.LastError = ex.Message;
+                this.XMLIsLoaded = false;
+                return false;
+            }
+        }
+
+        /// <summary>
+        /// This function loads an XML string that contains a data stream returned from the XMLSERVICE service program
+        /// </summary>
+        /// <param name="xmlString"></param>
+        /// <returns>True == Success, False == Fail</returns>
+        public bool LoadDataSetFromXmlString(string xmlString)
+        {
+            try
+            {
+                this.LastError = string.Empty;
+
+                StringReader reader = new StringReader(xmlString);
+
+                this.DS1 = new DataSet();
+                this.DS1.ReadXml(reader);
+
+                this.ColumnDefinitions = this.DS1.Tables["col"];
+                this.IColumnCount = this.DS1.Tables["col"].Rows.Count;
+                this.IRowCount = this.DS1.Tables["data"].Rows.Count / this.IColumnCount;
+
+                this.ReturnDataTable = new DataTable();
+                foreach (DataRow dr in this.DS1.Tables["col"].Rows)
+                {
+                    this.ReturnDataTable.Columns.Add(dr[0].ToString(), typeof(string));
+                }
+
+                int colCount = 0;
+                DataRow dr2 = null;
+                foreach (DataRow dr in this.DS1.Tables["data"].Rows)
+                {
+                    if (colCount == 0)
+                    {
+                        dr2 = this.ReturnDataTable.NewRow();
+                    }
+                    else if (colCount == this.IColumnCount)
+                    {
+                        this.ReturnDataTable.Rows.Add(dr2);
+                        dr2 = this.ReturnDataTable.NewRow();
+                        colCount = 0;
+                    }
+
+                    dr2[(DataColumn)dr[0]] = dr[1];
+                    colCount += 1;
+                }
+
+                this.ReturnDataTable.Rows.Add(dr2);
+                this.LastError = this.IRowCount + " rows were returned from XML string.";
+                this.XMLIsLoaded = true;
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                this.LastError = ex.Message;
+                this.XMLIsLoaded = false;
+                return false;
+            }
+        }
+
+        /// <summary>
         /// Sets non-changing db2 parms.
         /// </summary>
         /// <param name="xmlIn"></param>
@@ -378,7 +590,44 @@ namespace iXML
 
             return db2Parm;
         }
-    
+
+        /// <summary>
+        /// Write text string to file
+        /// </summary>
+        /// <param name="text"></param>
+        /// <param name="outputFile"></param>
+        /// <param name="append"></param>
+        /// <param name="replace"></param>
+        /// <returns>True == Success, False == Fail</returns>
+        private bool WriteStringToFile(string text, string outputFile, bool append = false, bool replace = true)
+        {
+            try
+            {
+                this.LastError = string.Empty;
+
+                if (File.Exists(outputFile))
+                {
+                    if (replace)
+                    {
+                        File.Delete(outputFile);
+                    }
+                }
+
+                using (StreamWriter writer = new StreamWriter(outputFile, append))
+                {
+                    writer.Write(text);
+                    writer.Close();
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+                {
+                this.LastError = ex.Message;
+                return false;
+            }
+        }
+
         /// <summary>
         /// Make an HTTP request with selected URL and get response
         /// </summary>
@@ -405,7 +654,7 @@ namespace iXML
 
                 if (request.Method == "POST")
                 {                    
-                    Byte[] postBytes = new ASCIIEncoding().GetBytes(data);
+                    byte[] postBytes = new ASCIIEncoding().GetBytes(data);
                     request.ContentType = "application/x-www-form-urlencoded";
                     request.ContentLength = postBytes.Length;
 
