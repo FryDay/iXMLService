@@ -17,7 +17,7 @@ namespace Tester
             InitializeComponent();
             txtUrl.Text = Settings.Default.URL;
             txtUser.Text = Settings.Default.User;
-            //txtPassword.Text = LoginInfo.Decrypt(Settings.Default.Password);
+            txtPassword.Text = LoginInfo.Decrypt(Settings.Default.Password);
         }
 
         private void btnOk_Click(object sender, EventArgs e)

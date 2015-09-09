@@ -18,7 +18,7 @@ namespace Tester
         {
             Password = Encoding.ASCII.GetBytes(password.PadRight(16, ' '));
 
-            EncryptInMemoryData(Password, MemoryProtectionScope.SameProcess);
+            EncryptInMemoryData(Password, MemoryProtectionScope.SameLogon);
         }
 
         public static string GetPassword()
@@ -28,7 +28,7 @@ namespace Tester
             {
                 Password.CopyTo(decPass, 0);
 
-                DecryptInMemoryData(decPass, MemoryProtectionScope.SameProcess);
+                DecryptInMemoryData(decPass, MemoryProtectionScope.SameLogon);
                 return Encoding.ASCII.GetString(decPass).Trim();
             }
             finally
@@ -42,7 +42,7 @@ namespace Tester
             byte[] decPass = Convert.FromBase64String(encString);
             try
             {
-                DecryptInMemoryData(decPass, MemoryProtectionScope.SameProcess);
+                DecryptInMemoryData(decPass, MemoryProtectionScope.SameLogon);
                 return Encoding.ASCII.GetString(decPass).Trim();
             }
             finally
