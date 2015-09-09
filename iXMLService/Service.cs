@@ -414,16 +414,20 @@ namespace iXML
                     post.Close();
                 }
 
-                HttpWebResponse response = (HttpWebResponse)request.GetResponse();
-                this.LastHTTPResponse = response.StatusCode + " " + response.StatusDescription;
-
-                if (response.StatusCode == HttpStatusCode.OK)
+                using (HttpWebResponse response = (HttpWebResponse)request.GetResponse())
                 {
-                    StreamReader responseStream = new StreamReader(response.GetResponseStream());
-                    responseData = responseStream.ReadToEnd();
-                }
+                    this.LastHTTPResponse = response.StatusCode + " " + response.StatusDescription;
 
-                response.Close();
+                    if (response.StatusCode == HttpStatusCode.OK)
+                    {
+                        using (StreamReader responseStream = new StreamReader(response.GetResponseStream()))
+                        {
+                            responseData = responseStream.ReadToEnd();
+                        }
+                    }
+
+                    response.Close();
+                }
             }
             catch (WebException ex)
             {
